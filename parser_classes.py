@@ -1,14 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-
+import sqlite3
 
 class Webscraper:
 
     def __init__(self):
         self.url = 'https://www.finmarket.ru/currency/rates/?id=10148&pv=1&cur={}&bd={}&bm={}&by={}&ed={}&em={}&ey={' \
                    '}&x=48&y=13#archive'
+        self.data = None
 
+    def get_data(self):
+        return self.data
     def parse_page(self, currency, start_date, end_date):
         dt1 = start_date.split('-')
         dt2 = end_date.split('-')
@@ -20,14 +23,44 @@ class Webscraper:
         table_of_values = content.find('table', {'class': 'karramba'})
         table = [element.text.strip() for element in table_of_values.find_all('td')]
         df = pd.DataFrame(
-            {'Дата': table[::4], 'Количество': table[1:][::4], 'Курс': table[2:][::4], 'Изменение': table[3:][::4]})
-        return df
+            {'Валюта':currency, 'Дата': table[::4], 'Количество': table[1:][::4], 'Курс': table[2:][::4], 'Изменение': table[3:][::4]})
+        self.data = df
+
+    def update_data_base(self):
+        conn = sqlite3.connect('ЦБ_currency_data.db')
+
+        conn.execute('''
+        CREATE TABLE IF NOT EXISTS ЦБ_currency_rates (
+            Валюта TEXT,
+            Дата DATE,
+            Количество INTEGER,
+            Курс NUMERIC,
+            Изменение NUMERIC,
+            UNIQUE(Дата, Валюта)  
+        )
+        ''')
+
+        for _, row in self.data.iterrows():
+            conn.execute('''
+            INSERT INTO ЦБ_currency_rates (Валюта, Дата, Количество, Курс, Изменение) 
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(Дата, Валюта) DO UPDATE SET
+            Количество=excluded.Количество,
+            Курс=excluded.Курс,
+            Изменение=excluded.Изменение
+            ''', (row['Валюта'], row['Дата'], row['Количество'], row['Курс'], row['Изменение']))
+
+        conn.commit()
+        conn.close()
 
 
 class Global_currencies:
     def __init__(self):
         self.url = 'https://www.iban.ru/currency-codes'
+        self.data = None
 
+    def get_data(self):
+        return self.data
     def parse_page(self):
         page = requests.get(self.url)
         content = BeautifulSoup(page.content, "html.parser")
@@ -35,4 +68,40 @@ class Global_currencies:
         table = [element.text.strip() for element in table_of_values.find_all('td')]
         df = pd.DataFrame(
             {'Страна': table[::4], 'Валюта': table[1:][::4], 'Код': table[2:][::4], 'Номер': table[3:][::4]})
-        return df
+        self.data = df
+
+    def update_data_base(self):
+        conn = sqlite3.connect('global_currency_data.db')
+
+        conn.execute('''
+        CREATE TABLE IF NOT EXISTS global_currency_info (
+            Страна TEXT PRIMARY KEY,
+            Валюта TEXT,
+            Код TEXT,
+            Номер INTEGER
+        )
+        ''')
+
+        for _, row in self.data.iterrows():
+            conn.execute('''
+            INSERT INTO global_currency_info (Страна, Валюта, Код, Номер) 
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(Страна) DO UPDATE SET
+            Валюта=excluded.Валюта,
+            Код=excluded.Код,
+            Номер=excluded.Номер
+            ''', (row['Страна'], row['Валюта'], row['Код'], row['Номер']))
+
+        conn.commit()
+        conn.close()
+
+
+# scr = Global_currencies()
+# scr.parse_page()
+# scr.update_data_base()
+# scr2 = Webscraper()
+# scr2.parse_page('ЕВРО','2021-05-01','2022-05-01')
+# data = scr2.get_data()
+# print(data['Изменение'])
+# print(scr2.get_data())
+# scr2.update_data_base()

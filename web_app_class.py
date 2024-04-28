@@ -17,13 +17,14 @@ class Input_form(MethodView):
         start_date = sep.join(start_date)
         end_date = request.form['end_date']
         end_date = sep.join(end_date)
-        scraper = classes.Webscraper()
 
         print("Валюта:", currency, flush=True)
         print("Начальная дата:", start_date, flush=True)
         print("Конечная дата:", end_date, flush=True)
 
-        df = scraper.parse_page(currency, start_date, end_date)
+        scraper = classes.Webscraper()
+        scraper.parse_page(currency, start_date, end_date)
+        df = scraper.get_data()
         df_html = df.to_html(index=False)
         print(df)
 
