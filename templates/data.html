@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Курсы валют</title>
+    <style>
+        body {
+            font-family: Courier, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 8px;
+        }
+        th {
+            background-color: #6c7ae0;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(odd) {
+            background-color: #e8eaf6;
+        }
+        tr:hover {
+            background-color: #dcdde1;
+        }
+        .table-title {
+            margin-top: 50px;
+            color: #333;
+        }
+        .red-text { color: #e74c3c; }
+        .green-text { color: #2ecc71; }
+        .blue-bg { background-color: #3498db; }
+    </style>
+</head>
+<body>
+    <div>
+        <h2 class="table-title">Текущие курсы валют</h2>
+        {{ table|safe }}
+    </div>
+</body>
+</html>
