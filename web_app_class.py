@@ -24,6 +24,7 @@ class Input_form(MethodView):
 
         scraper = classes.Webscraper()
         scraper.parse_page(currency, start_date, end_date)
+        scraper.update_data_base()
         df = scraper.get_data()
         df_html = df.to_html(index=False)
         print(df)
