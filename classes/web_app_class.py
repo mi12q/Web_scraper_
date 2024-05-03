@@ -1,6 +1,6 @@
-from flask import Flask, request, render_template
+from flask import request, render_template
 from flask.views import MethodView
-from classes import parser_classes as classes
+from classes import parser_classes as classes, currencies as curr
 
 
 class Input_form(MethodView):
@@ -22,7 +22,7 @@ class Input_form(MethodView):
         print("Конечная дата:", end_date, flush=True)
 
         scraper = classes.Webscraper()
-        scraper.parse_page(currency, start_date, end_date)
+        scraper.parse_page(currency, start_date, end_date, curr.currencies)
         scraper.update_data_base()
         print(scraper.get_url())
         df = scraper.get_data()
@@ -30,4 +30,3 @@ class Input_form(MethodView):
         print(df)
 
         return render_template('data.html', table=df_html)
-
