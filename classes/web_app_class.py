@@ -1,11 +1,10 @@
 from flask import Flask, request, render_template
 from flask.views import MethodView
-import parser_classes as classes
-
-app = Flask(__name__)
+from classes import parser_classes as classes
 
 
 class Input_form(MethodView):
+
     def get(self):
         return render_template('website.html')
 
@@ -25,14 +24,10 @@ class Input_form(MethodView):
         scraper = classes.Webscraper()
         scraper.parse_page(currency, start_date, end_date)
         scraper.update_data_base()
+        print(scraper.get_url())
         df = scraper.get_data()
         df_html = df.to_html(index=False)
         print(df)
 
         return render_template('data.html', table=df_html)
 
-
-app.add_url_rule('/', view_func=Input_form.as_view('template'))
-
-if __name__ == '__main__':
-    app.run(debug=False)

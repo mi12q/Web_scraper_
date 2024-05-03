@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменения курсов валют</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+        }
+
+        select, input[type=date], input[type=submit] {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* So padding doesn't affect width */
+        }
+
+        input[type=submit] {
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        input[type=submit]:hover {
+            background-color: #004494;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Просмотр изменений курсов валют</h2>
+
+    <form action="/path_to_server_script" method="get">
+        <label for="countries">Выберите страны:</label>
+        <select name="countries" id="countries" multiple required>
+            <option value="USA">Соединенные Штаты Америки</option>
+            <option value="RUS">Россия</option>
+            <option value="EUR">Еврозона</option>
+            <option value="UK">Великобритания</option>
+            <!-- Добавьте другие страны по необходимости -->
+        </select>
+
+        <label for="start-date">Начальная дата:</label>
+        <input type="date" id="start-date" name="start-date" required>
+
+        <label for="end-date">Конечная дата:</label>
+        <input type="date" id="end-date" name="end-date" required>
+
+        <input type="submit" value="Просмотреть изменения">
+    </form>
+
+    <div class="footer">
+        <p>Введите период и страны для просмотра изменений курсов валют.</p>
+    </div>
+</div>
+
+</body>
+</html>
