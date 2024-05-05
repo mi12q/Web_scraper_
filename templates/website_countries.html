@@ -56,6 +56,8 @@
             margin-top: 20px;
             text-align: center;
         }
+
+
     </style>
 </head>
 <body>
@@ -63,21 +65,112 @@
 <div class="container">
     <h2>Просмотр изменений курсов валют</h2>
 
-    <form action="/path_to_server_script" method="get">
+    <form id="selectionForm" method="post">
         <label for="countries">Выберите страны:</label>
         <select name="countries" id="countries" multiple required>
-            <option value="USA">Соединенные Штаты Америки</option>
-            <option value="RUS">Россия</option>
-            <option value="EUR">Еврозона</option>
-            <option value="UK">Великобритания</option>
-            <!-- Добавьте другие страны по необходимости -->
+            <option value="Американское Самоа">Американское Самоа</option>
+            <option value="Бонэйр">Бонэйр</option>
+            <option value="Британские территории в Индийском Океане">Британские территории в Индийском Океане</option>
+            <option value="Эквадор">Эквадор</option>
+            <option value="Сальвадор">Сальвадор</option>
+            <option value="Гуам">Гуам</option>
+            <option value="Гаити">Гаити</option>
+            <option value="Маршалловы острова">Маршалловы острова</option>
+            <option value="Микронезия">Микронезия</option>
+            <option value="Северные Марианские острова">Северные Марианские острова</option>
+            <option value="Палау">Палау</option>
+            <option value="Панама">Панама</option>
+            <option value="Пуэрто-Рико">Пуэрто-Рико</option>
+            <option value="Западный Тимор">Западный Тимор</option>
+            <option value="Тёркс и Кайкос">Тёркс и Кайкос</option>
+            <option value="Острова США">Острова США</option>
+            <option value="США">США</option>
+            <option value="Британские Виргинские Острова">Британские Виргинские Острова</option>
+            <option value="Виргинские Острова">Виргинские Острова</option>
+            <option value="Аландские острова">Аландские острова</option>
+            <option value="Андорра">Андорра</option>
+            <option value="Австрия">Австрия</option>
+            <option value="Бельгия">Бельгия</option>
+            <option value="Кипр">Кипр</option>
+            <option value="Эстония">Эстония</option>
+            <option value="Европейский Союз">Европейский Союз</option>
+            <option value="Финляндия">Финляндия</option>
+            <option value="Франция">Франция</option>
+            <option value="Гвиана">Гвиана</option>
+            <option value="Французские Южные и Антарктические территории">Французские Южные и Антарктические
+                территории
+            </option>
+            <option value="Германия">Германия</option>
+            <option value="Греция">Греция</option>
+            <option value="Гваделупа">Гваделупа</option>
+            <option value="Ватикан">Ватикан</option>
+            <option value="Ирландия">Ирландия</option>
+            <option value="Италия">Италия</option>
+            <option value="Латвия">Латвия</option>
+            <option value="Литва">Литва</option>
+            <option value="Люксембург">Люксембург</option>
+            <option value="Мальта">Мальта</option>
+            <option value="Мартиника">Мартиника</option>
+            <option value="Майотта">Майотта</option>
+            <option value="Монако">Монако</option>
+            <option value="Черногория">Черногория</option>
+            <option value="Голландия">Голландия</option>
+            <option value="Португалия">Португалия</option>
+            <option value="Реуньон">Реуньон</option>
+            <option value="Сен-Бартелеми">Сен-Бартелеми</option>
+            <option value="Сен-Мартин">Сен-Мартин</option>
+            <option value="Сен-Пьер и Микелон">Сен-Пьер и Микелон</option>
+            <option value="Сан-Марино">Сан-Марино</option>
+            <option value="Словакия">Словакия</option>
+            <option value="Словения">Словения</option>
+            <option value="Испания">Испания</option>
+            <option value="Лихтенштейн">Лихтенштейн</option>
+            <option value="Швейцария">Швейцария</option>
+            <option value="Австралия">Австралия</option>
+            <option value="Остров Рождества">Остров Рождества</option>
+            <option value="Кокосовые острова">Кокосовые острова</option>
+            <option value="Остров Херд и острова Макдональд">Остров Херд и острова Макдональд</option>
+            <option value="Кирибати">Кирибати</option>
+            <option value="Науру">Науру</option>
+            <option value="Остров Норфолк">Остров Норфолк</option>
+            <option value="Тувалу">Тувалу</option>
+            <option value="Болгария">Болгария</option>
+            <option value="Бразилия">Бразилия</option>
+            <option value="Вьетнам">Вьетнам</option>
+            <option value="Гонконг">Гонконг</option>
+            <option value="Грузия">Грузия</option>
+            <option value="Дания">Дания</option>
+            <option value="Фарерские острова">Фарерские острова</option>
+            <option value="Гренландия">Гренландия</option>
+            <option value="Объединенные Арабские Эмираты">Объединенные Арабские Эмираты</option>
+            <option value="Египет">Египет</option>
+            <option value="Бутан">Бутан</option>
+            <option value="Индия">Индия</option>
+            <option value="Канада">Канада</option>
+            <option value="Йемен">Йемен</option>
+            <option value="Острова Кука">Острова Кука</option>
+            <option value="Новая Зеландия">Новая Зеландия</option>
+            <option value="Ниуэ">Ниуэ</option>
+            <option value="Острова Питкэрн">Острова Питкэрн</option>
+            <option value="Токелау">Токелау</option>
+            <option value="Туркменистан">Туркменистан</option>
+            <option value="Остров Буве">Остров Буве</option>
+            <option value="Норвегия">Норвегия</option>
+            <option value="Сербия">Сербия</option>
+            <option value="Сингапур">Сингапур</option>
+            <option value="Таиланд">Таиланд</option>
+            <option value="Турция">Турция</option>
+            <option value="Узбекистан">Узбекистан</option>
+            <option value="Чехия">Чехия</option>
+            <option value="Швеция">Швеция</option>
+            <option value="Япония">Япония</option>
         </select>
 
         <label for="start-date">Начальная дата:</label>
-        <input type="date" id="start-date" name="start-date" required>
+        <input type="date" id="start_date" name="start_date" required>
 
         <label for="end-date">Конечная дата:</label>
-        <input type="date" id="end-date" name="end-date" required>
+        <input type="date" id="end_date" name="end_date" required>
 
         <input type="submit" value="Просмотреть изменения">
     </form>

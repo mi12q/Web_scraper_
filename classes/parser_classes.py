@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import sqlite3
-
+from datetime import datetime
 
 class Webscraper:
 
@@ -32,7 +32,7 @@ class Webscraper:
         self.data = df
 
     def update_data_base(self):
-        conn = sqlite3.connect('../ЦБ_currency_data.db')
+        conn = sqlite3.connect('ЦБ_currency_data.db')
         cursor = conn.cursor()
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS ЦБ_currency_rates (
@@ -46,12 +46,12 @@ class Webscraper:
         ''')
 
         for _, row in self.data.iterrows():
-
+            data = datetime.strptime(row['Дата'], '%d.%m.%Y').strftime('%Y-%m-%d')
             cursor.execute('''
                     SELECT COUNT(*) 
                     FROM ЦБ_currency_rates
                     WHERE Валюта=? AND Дата=? AND Количество=? AND Курс=? AND Изменение=?
-                ''', (row['Валюта'], row['Дата'], row['Количество'], row['Курс'], row['Изменение']))
+                ''', (row['Валюта'], data, row['Количество'], row['Курс'], row['Изменение']))
 
             count = cursor.fetchone()[0]
             if count == 0:
@@ -62,7 +62,7 @@ class Webscraper:
                         Количество=excluded.Количество,
                         Курс=excluded.Курс,
                         Изменение=excluded.Изменение
-                    ''', (row['Валюта'], row['Дата'], row['Количество'], row['Курс'], row['Изменение']))
+                    ''', (row['Валюта'], data, row['Количество'], row['Курс'], row['Изменение']))
 
         conn.commit()
         conn.close()
@@ -86,7 +86,7 @@ class Global_currencies:
         self.data = df
 
     def update_data_base(self):
-        conn = sqlite3.connect('../global_currency_data.db')
+        conn = sqlite3.connect('global_currency_data.db')
         cursor = conn.cursor()
 
         cursor.execute('''
