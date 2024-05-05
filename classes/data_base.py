@@ -3,13 +3,11 @@ from classes import parser_classes as parser, currencies as curr
 import sqlite3
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
-
+import mpld3
 
 class DataBase:
     def __init__(self, start_date):
-        scr = parser.Global_currencies()
-        scr.parse_page()
-        self.data = scr.get_data()
+        self.data = None
         self.start_date = start_date
         self.parameters = None
 
@@ -25,6 +23,14 @@ class DataBase:
             self.create_parameters_db(currency_dict)
         else:
             self.parameters = pd.read_sql_query("SELECT * FROM parameters", conn)
+
+    def set_data(self, data):
+        self.data = data
+
+    def set_global_data(self):
+        scr = parser.Global_currencies()
+        scr.parse_page()
+        self.data = scr.get_data()
 
     def update_parameters(self, new_data):
         merged_data = pd.merge(new_data[['Валюта', 'Дата', 'Курс']], self.data[['Валюта', 'Страна']], on='Валюта',
@@ -142,7 +148,8 @@ class DataBase:
             ]
 
         new_df = filtered_df.pivot(index='Дата', columns='Страна', values='Изменение')
-        ax = new_df.plot(figsize=(10, 5))
+        fig, ax = plt.subplots()
+        new_df.plot(figsize=(10, 5),ax=ax)
         plt.minorticks_on()
         plt.grid(which='major',
                  color='grey',
@@ -154,9 +161,10 @@ class DataBase:
         ax.set_xlabel('Дата')
         ax.set_ylabel('Изменение курса валюти')
         ax.legend()
-        plt.show()
-
-    def get_currency_by_country(self,country_list):
+        mpld3_html = mpld3.fig_to_html(fig)
+        plt.close()
+        return mpld3_html
+    def get_currency_by_country(self, country_list):
         conn = sqlite3.connect('parameters.db')
         country_placeholders = ','.join(['?'] * len(country_list))
         query = f"""

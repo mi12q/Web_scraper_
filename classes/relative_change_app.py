@@ -23,11 +23,13 @@ class Relative_change(MethodView):
         data_base = db.DataBase('2022-02-01')
         data_base.set_parameters(curr.currencies.keys())
         currency_list = data_base.get_currency_by_country(countries)
+        data_base.set_data(currency_list)
         print(currency_list)
         scr = parser.Webscraper()
         for currency in currency_list['Валюта']:
             code = next((k for k, v in curr.currencies.items() if v == currency), None)
             scr.parse_page(code,start_date,end_date,curr.currencies)
             data_base.update_relative_currency_info(scr.get_data())
-        data_base.plot_data(countries, start_date, end_date)
-        return render_template('data.html')
+        graph = data_base.plot_data(countries, start_date, end_date)
+
+        return render_template('graph.html', graph_html=graph)
