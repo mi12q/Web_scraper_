@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import sqlite3
-from datetime import datetime
+
 
 class Webscraper:
 
@@ -35,6 +35,8 @@ class Webscraper:
     def update_data_base(self):
         conn = sqlite3.connect('ЦБ_currency_data.db')
         cursor = conn.cursor()
+        df = self.data.copy()
+        df['Дата'] = pd.to_datetime(df['Дата'], format='%d.%m.%Y').dt.strftime('%Y-%m-%d')
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS ЦБ_currency_rates (
             Валюта TEXT,
@@ -42,29 +44,22 @@ class Webscraper:
             Количество INTEGER,
             Курс NUMERIC,
             Изменение NUMERIC,
-            UNIQUE(Дата, Валюта)  
+            UNIQUE(Валюта, Дата)  
         )
         ''')
 
-        for _, row in self.data.iterrows():
-            data = datetime.strptime(row['Дата'], '%d.%m.%Y').strftime('%Y-%m-%d')
-            cursor.execute('''
-                    SELECT COUNT(*) 
-                    FROM ЦБ_currency_rates
-                    WHERE Валюта=? AND Дата=? AND Количество=? AND Курс=? AND Изменение=?
-                ''', (row['Валюта'], data, row['Количество'], row['Курс'], row['Изменение']))
+        update_query = '''
+        INSERT INTO ЦБ_currency_rates (Валюта, Дата, Количество, Курс, Изменение )
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(Валюта, Дата)
+        DO UPDATE SET Количество = excluded.Количество,
+                    Курс = excluded.Курс,
+                    Изменение = excluded.Изменение
+         WHERE Количество != excluded.Количество OR Изменение != excluded.Изменение OR Курс!= excluded.Курс;
+        '''
 
-            count = cursor.fetchone()[0]
-            if count == 0:
-                cursor.execute('''
-                        INSERT INTO ЦБ_currency_rates (Валюта, Дата, Количество, Курс, Изменение) 
-                        VALUES (?, ?, ?, ?, ?)
-                        ON CONFLICT(Валюта, Дата) DO UPDATE SET 
-                        Количество=excluded.Количество,
-                        Курс=excluded.Курс,
-                        Изменение=excluded.Изменение
-                    ''', (row['Валюта'], data, row['Количество'], row['Курс'], row['Изменение']))
-
+        data_tuples = list(df.itertuples(index=False, name=None))
+        cursor.executemany(update_query, data_tuples)
         conn.commit()
         conn.close()
 
@@ -85,6 +80,7 @@ class Global_currencies:
         df = pd.DataFrame(
             {'Страна': table[::4], 'Валюта': table[1:][::4], 'Код': table[2:][::4], 'Номер': table[3:][::4]})
         self.data = df
+        return self.data
 
     def update_data_base(self):
         conn = sqlite3.connect('global_currency_data.db')
@@ -92,29 +88,25 @@ class Global_currencies:
 
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS global_currency_info (
-            Страна TEXT,
+            Страна TEXT PRIMARY KEY,
             Валюта TEXT,
             Код TEXT,
             Номер INTEGER
         )
         ''')
 
-        for _, row in self.data.iterrows():
+        update_query = '''
+        INSERT INTO global_currency_info (Страна, Валюта, Код, Номер)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(Страна)
+        DO UPDATE SET Валюта = excluded.Валюта,
+                    Код = excluded.Код,
+                    Номер = excluded.Номер
+         WHERE Валюта != excluded.Валюта OR Код != excluded.Код OR Номер!= excluded.Номер;
+        '''
 
-            cursor.execute('''
-                    SELECT EXISTS(
-                    SELECT 1
-                    FROM global_currency_info
-                    WHERE Страна=? AND Валюта=? AND Код=? AND Номер=? )
-                ''', (row['Страна'], row['Валюта'], row['Код'], row['Номер']))
-            count = cursor.fetchone()[0]
-
-            if count == 0:
-                cursor.execute('''
-                INSERT INTO global_currency_info (Страна, Валюта, Код, Номер) 
-                VALUES (?, ?, ?, ?)
-                ''', (row['Страна'], row['Валюта'], row['Код'], row['Номер']))
-                print('updated')
-
+        data_tuples = list(self.data.itertuples(index=False, name=None))
+        cursor.executemany(update_query, data_tuples)
         conn.commit()
         conn.close()
+
