@@ -30,6 +30,7 @@ class Webscraper:
             {'Валюта': currencies[currency], 'Дата': table[::4], 'Количество': table[1:][::4], 'Курс': table[2:][::4],
              'Изменение': table[3:][::4]})
         self.data = df
+        return self.data
 
     def update_data_base(self):
         conn = sqlite3.connect('ЦБ_currency_data.db')

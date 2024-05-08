@@ -3,8 +3,8 @@ from classes import currencies as curr
 
 
 def main():
-    start_date = '2022-02-01'
-    end_date = '2023-02-01'
+    start_date = '2015-02-01'
+    end_date = '2016-02-01'
     data_base = db.DataBase(start_date)
     data_base.set_global_data()
     data_base.set_parameters(curr.currencies.keys())
