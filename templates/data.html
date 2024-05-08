@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,6 +51,7 @@
 </head>
 <body>
     <div>
+        <a href="{{ url_for('input_form') }}" class="button">Вернуться назад</a>
         <h2 class="table-title">Текущие курсы валют</h2>
         {{ table|safe }}
     </div>

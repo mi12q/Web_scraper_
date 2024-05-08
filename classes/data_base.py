@@ -136,6 +136,7 @@ class DataBase:
             self.update_relative_currency_info(all_data)
 
     def plot_data(self, country_list, start_date, end_date):
+        plt.switch_backend('agg')
         conn = sqlite3.connect('currency_relative_change_by_country.db')
         country_placeholders = ','.join(['?'] * len(country_list))
         query = f"""
@@ -159,6 +160,8 @@ class DataBase:
             ]
 
         new_df = filtered_df.pivot(index='Дата', columns='Страна', values='Изменение')
+        if new_df.empty:
+            return "<html><body><p> Нет изменений в данном периоде. </p></body></html>"
         fig, ax = plt.subplots()
         new_df.plot(figsize=(15, 10), ax=ax)
         plt.minorticks_on()

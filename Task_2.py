@@ -4,7 +4,7 @@ from flask import Flask
 
 def main():
     app = Flask(__name__)
-    app.add_url_rule('/', view_func=rc.Relative_change.as_view('template'))
+    app.add_url_rule('/', view_func=rc.Relative_change.as_view('input_form'))
     app.run(debug=False)
 
 

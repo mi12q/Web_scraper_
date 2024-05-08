@@ -5,6 +5,7 @@
     <title>Относительное изменение курса валют выбранных стран</title>>
 </head>
 <body>
+    <a href="{{ url_for('input_form') }}" class="button">Вернуться назад</a>
     <div id="currency-chart-container" class="graph-container">
         {{ graph_html|safe }}
     </div>
