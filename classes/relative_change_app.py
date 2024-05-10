@@ -30,7 +30,7 @@ class Relative_change(MethodView):
         print(f"Начальная дата: {start_date}", flush=True)
         print(f"Конечная дата: {end_date}", flush=True)
 
-        data_base_instance = db.DataBase('2015-02-01')
+        data_base_instance = db.DataBase('2022-02-01')
         data_base_instance.set_parameters(curr.currencies.keys())
         currency_list = data_base_instance.get_currency_by_country(countries)
         data_base_instance.set_data(currency_list)
