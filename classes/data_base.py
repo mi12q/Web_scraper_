@@ -14,16 +14,16 @@ class DataBase:
         :param parameters: - таблица параметров на дату start_date
         :param start_date: - дата относительно которой рассчитывается относительное изменение валютного курса
         """
-        self.data = data
-        self.start_date = start_date
-        self.parameters = parameters
+        self.__data = data
+        self.__start_date = start_date
+        self.__parameters = parameters
 
     def get_parameters(self):
         """
 
         :return: - возвращает поле parameters
         """
-        return self.parameters
+        return self.__parameters
 
     def set_parameters(self, currency_dict):
         """
@@ -48,7 +48,7 @@ class DataBase:
         if data is None:
             self.create_parameters_db(currency_dict)
         else:
-            self.parameters = pd.read_sql_query("SELECT * FROM parameters", conn)
+            self.__parameters = pd.read_sql_query("SELECT * FROM parameters", conn)
 
     def set_data(self, data):
         """
@@ -56,7 +56,7 @@ class DataBase:
         :param data: - таблица содержащая страны и валюты,
         для которых рассчитывается относительное изменение валютного курса
         """
-        self.data = data
+        self.__data = data
 
     def set_global_data(self):
         """
@@ -65,7 +65,7 @@ class DataBase:
         """
         scr = parser.Global_currencies()
         scr.parse_page()
-        self.data = scr.get_data()
+        self.__data = scr.get_data()
 
     def update_parameters(self, new_data):
         """
@@ -73,7 +73,7 @@ class DataBase:
         :param new_data: - новые данные
         :return:
         """
-        merged_data = pd.merge(new_data[['Валюта', 'Дата', 'Курс']], self.data[['Валюта', 'Страна']], on='Валюта',
+        merged_data = pd.merge(new_data[['Валюта', 'Дата', 'Курс']], self.__data[['Валюта', 'Страна']], on='Валюта',
                                how="inner").iloc[:, [3, 0, 1, 2]]
         merged_data['Дата'] = pd.to_datetime(merged_data['Дата'], format='%d.%m.%Y').dt.strftime('%Y-%m-%d')
         conn = sqlite3.connect('local_data_base.db')
@@ -99,7 +99,7 @@ class DataBase:
 
         data_tuples = list(merged_data.itertuples(index=False, name=None))
         cursor.executemany(update_query, data_tuples)
-        self.parameters = pd.read_sql_query("SELECT * FROM parameters", conn)
+        self.__parameters = pd.read_sql_query("SELECT * FROM parameters", conn)
         conn.commit()
         conn.close()
 
@@ -109,9 +109,9 @@ class DataBase:
         :param currency_dict: - словарь включающий все валюты
         :return:
         """
-        end_date = (datetime.strptime(self.start_date, '%Y-%m-%d') + timedelta(days=365)).strftime('%Y-%m-%d')
+        end_date = (datetime.strptime(self.__start_date, '%Y-%m-%d') + timedelta(days=365)).strftime('%Y-%m-%d')
         scr = parser.Webscraper()
-        data_frames = [scr.parse_page(currency, self.start_date, end_date, curr.currencies) for currency in
+        data_frames = [scr.parse_page(currency, self.__start_date, end_date, curr.currencies) for currency in
                        currency_dict]
         non_empty_data = [df.iloc[:1] for df in data_frames if not df.empty]
         all_data = pd.concat(non_empty_data, ignore_index=True)
@@ -127,13 +127,13 @@ class DataBase:
         """
         merged_data = pd.merge(
             new_data[['Валюта', 'Дата', 'Курс']],
-            self.parameters[['Валюта', 'Страна', 'Курс']].rename(columns={'Курс': 'Курс_на_дату'}),
+            self.__parameters[['Валюта', 'Страна', 'Курс']].rename(columns={'Курс': 'Курс_на_дату'}),
             on=['Валюта'],
             how='inner'
         ).iloc[:, [3, 0, 1, 2, 4]]
         merged_data['Дата'] = pd.to_datetime(merged_data['Дата'], format='%d.%m.%Y').dt.strftime('%Y-%m-%d')
         change = merged_data.apply(
-            lambda row: (row['Курс'].replace(',', '.') - float(row['Курс_на_дату'].replace(',', '.'))) / float(
+            lambda row: (float(row['Курс'].replace(',', '.')) - float(row['Курс_на_дату'].replace(',', '.'))) / float(
                 row['Курс_на_дату'].replace(',', '.')) if row['Курс_на_дату'] != '0' else 0, axis=1)
         change = pd.DataFrame(change)
         change = change[change.columns[0]]
