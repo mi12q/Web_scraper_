@@ -133,8 +133,8 @@ class DataBase:
         ).iloc[:, [3, 0, 1, 2, 4]]
         merged_data['Дата'] = pd.to_datetime(merged_data['Дата'], format='%d.%m.%Y').dt.strftime('%Y-%m-%d')
         change = merged_data.apply(
-            lambda row: (float(row['Курс_на_дату'].replace(',', '.')) - float(row['Курс'].replace(',', '.'))) / float(
-                row['Курс'].replace(',', '.')) if row['Курс'] != '0' else 0, axis=1)
+            lambda row: (row['Курс'].replace(',', '.') - float(row['Курс_на_дату'].replace(',', '.'))) / float(
+                row['Курс_на_дату'].replace(',', '.')) if row['Курс_на_дату'] != '0' else 0, axis=1)
         change = pd.DataFrame(change)
         change = change[change.columns[0]]
         merged_data = merged_data.drop(columns=['Курс_на_дату'])
