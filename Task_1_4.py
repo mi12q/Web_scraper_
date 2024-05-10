@@ -3,6 +3,13 @@ from classes import currencies as curr
 
 
 def main():
+    """
+    Считываются данные со страницы для выбранного диапазона дат.
+    Данные синхронизуются в локальной базе данных 'local_data_base.db', создаётся таблица параметров 'parameters',
+    в отдельной таблице 'relative_change', синхронизуется расчёт относительных изменений курса.
+    Диапазон дат взят для примера.
+    :return:
+    """
     start_date = '2015-02-01'
     end_date = '2016-02-01'
     data_base = db.DataBase(start_date)

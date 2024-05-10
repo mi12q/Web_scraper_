@@ -32,7 +32,7 @@ class DataBase:
         :param currency_dict: - словарь включающий все валюты
         :return:
         """
-        conn = sqlite3.connect('parameters.db')
+        conn = sqlite3.connect('local_data_base.db')
         cursor = conn.cursor()
         cursor.execute(''' 
         CREATE TABLE IF NOT EXISTS parameters (
@@ -76,7 +76,7 @@ class DataBase:
         merged_data = pd.merge(new_data[['Валюта', 'Дата', 'Курс']], self.data[['Валюта', 'Страна']], on='Валюта',
                                how="inner").iloc[:, [3, 0, 1, 2]]
         merged_data['Дата'] = pd.to_datetime(merged_data['Дата'], format='%d.%m.%Y').dt.strftime('%Y-%m-%d')
-        conn = sqlite3.connect('parameters.db')
+        conn = sqlite3.connect('local_data_base.db')
         cursor = conn.cursor()
 
         cursor.execute(''' 
@@ -139,7 +139,7 @@ class DataBase:
         change = change[change.columns[0]]
         merged_data = merged_data.drop(columns=['Курс_на_дату'])
         merged_data.insert(4, "Изменение", change, True)
-        conn = sqlite3.connect('currency_relative_change_by_country.db')
+        conn = sqlite3.connect('local_data_base.db')
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -195,7 +195,7 @@ class DataBase:
         :return:
         """
         plt.switch_backend('agg')
-        conn = sqlite3.connect('currency_relative_change_by_country.db')
+        conn = sqlite3.connect('local_data_base.db')
         country_placeholders = ','.join(['?'] * len(country_list))
         query = f"""
                 SELECT Страна, Валюта, Дата, Курс, Изменение
@@ -245,7 +245,7 @@ class DataBase:
         :param country_list: - список стран
         :return:
         """
-        conn = sqlite3.connect('parameters.db')
+        conn = sqlite3.connect('local_data_base.db')
         country_placeholders = ','.join(['?'] * len(country_list))
         query = f"""
                     SELECT Страна, Валюта

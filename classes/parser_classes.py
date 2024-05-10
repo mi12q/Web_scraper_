@@ -58,7 +58,7 @@ class Webscraper:
         Обновляет базу данных новыми данными.
         :return:
         """
-        conn = sqlite3.connect('ЦБ_currency_data.db')
+        conn = sqlite3.connect('local_data_base.db')
         cursor = conn.cursor()
         df = self.data.copy()
         df['Дата'] = pd.to_datetime(df['Дата'], format='%d.%m.%Y').dt.strftime('%Y-%m-%d')
@@ -123,7 +123,7 @@ class Global_currencies:
         Обновляет базу данных новыми данными.
         :return:
         """
-        conn = sqlite3.connect('global_currency_data.db')
+        conn = sqlite3.connect('local_data_base.db')
         cursor = conn.cursor()
 
         cursor.execute('''
