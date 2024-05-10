@@ -7,9 +7,18 @@ from concurrent.futures import ThreadPoolExecutor
 class Relative_change(MethodView):
 
     def get(self):
+        """
+
+        :return: - возвращает готовый шаблон веб-интерфейса к относительным изменениям курсов.
+        """
         return render_template('website_countries.html')
 
     def post(self):
+        """
+        Получает выбранные пользователем станы,
+        считываются данные со страницы для выбранных стран, строится график относительного изменения курсов валют.
+        :return: - возвращает шаблон страницы, содержащий график относительного изменения курсов валют.
+        """
         sep = ""
         countries = request.form.getlist('countries')
         start_date = sep.join(request.form['start_date'])
