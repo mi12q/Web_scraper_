@@ -216,7 +216,7 @@ class DataBase:
 
         new_df = filtered_df.pivot(index='Дата', columns='Страна', values='Изменение')
         if new_df.empty:
-            return "<html><body><p> Данные для выбранной страны отсутствуют. </p></body></html>"
+            return "<html><body><p> Данные для выбранной страны отсутствуют в указанном диапазоне. </p></body></html>"
         fig, ax = plt.subplots()
         new_df.plot(figsize=(15, 10), ax=ax)
         plt.minorticks_on()
