@@ -38,7 +38,7 @@
             margin-top: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            box-sizing: border-box; /* So padding doesn't affect width */
+            box-sizing: border-box;
         }
 
         input[type=submit] {
@@ -178,6 +178,50 @@
         <p>Введите период и страны для просмотра изменений курсов валют.</p>
     </div>
 </div>
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
 
+        function adjustEndDate() {
+            const startDate = startDateInput.valueAsDate;
+            const endDate = endDateInput.valueAsDate;
+
+            if (startDate && endDate) {
+                if (startDate > endDate) {
+                const oneDayLater = new Date(startDate.getTime() + (24 * 60 * 60 * 1000));
+                endDateInput.valueAsDate = oneDayLater;
+                }
+                const twoYearsLater = new Date(startDate.getTime());
+                twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
+
+                if (endDate.getTime() > twoYearsLater.getTime()) {
+                    endDateInput.valueAsDate = twoYearsLater;
+                }
+            }
+        }
+
+        function adjustStartDate() {
+            const startDate = startDateInput.valueAsDate;
+            const endDate = endDateInput.valueAsDate;
+
+            if (startDate && endDate) {
+                if (startDate > endDate) {
+                const oneDayLater = new Date(startDate.getTime() + (24 * 60 * 60 * 1000));
+                endDateInput.valueAsDate = oneDayLater;
+                   }
+                const twoYearsEarlier = new Date(endDate.getTime());
+                twoYearsEarlier.setFullYear(twoYearsEarlier.getFullYear() - 2);
+
+                if (startDate.getTime() < twoYearsEarlier.getTime()) {
+                    startDateInput.valueAsDate = twoYearsEarlier;
+                }
+            }
+        }
+
+        startDateInput.addEventListener('change', adjustEndDate);
+        endDateInput.addEventListener('change', adjustStartDate);
+    });
+</script>
 </body>
 </html>
