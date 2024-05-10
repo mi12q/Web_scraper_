@@ -1,7 +1,6 @@
 # Web scraping app with interface
 * ### Task_1_1.py
-  * Открывается веб-интерфейс для считывания данных.
-     * ![2024-05-05_17-18-35](https://github.com/mi12q/Web_scraper_/assets/94108357/f9ce5a46-bcf5-450a-a71f-cb11f17889a6)
+  * Открывается веб-интерфейс для считывания данных. ![2024-05-05_17-18-35](https://github.com/mi12q/Web_scraper_/assets/94108357/f9ce5a46-bcf5-450a-a71f-cb11f17889a6)
   * Считываются данные для выбранной пользователем валюты и диапазона дат.
      * ![2024-05-10_16-54-29](https://github.com/mi12q/Web_scraper_/assets/94108357/844c0c12-7455-4e8a-b9dd-1c705ddf52d3)
   * Данные синхронизуются в локальной базе данных 'local_data_base.db', в таблице 'ЦБ_currency_rates'.
