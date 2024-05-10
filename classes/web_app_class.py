@@ -30,13 +30,12 @@ class Input_form(MethodView):
         print("Валюта:", currency, flush=True)
         print("Начальная дата:", start_date, flush=True)
         print("Конечная дата:", end_date, flush=True)
-
         scraper = classes.Webscraper()
         scraper.parse_page(currency, start_date, end_date, curr.currencies)
         scraper.update_data_base()
         print(scraper.get_url())
         df = scraper.get_data()
-        df_html = df.to_html(index=False)
+        df_html = df.iloc[:, 1:].to_html(index=False)
         print(df)
 
-        return render_template('data.html', table=df_html)
+        return render_template('data.html', table=df_html, title= curr.currencies[currency])

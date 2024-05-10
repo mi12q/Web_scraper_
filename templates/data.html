@@ -52,8 +52,9 @@
 <body>
     <div>
         <a href="{{ url_for('input_form') }}" class="button">Вернуться назад</a>
-        <h2 class="table-title">Текущие курсы валют</h2>
+        <h2 class="table-title">Выбранная валюта: {{ title }}</h2>
         {{ table|safe }}
     </div>
 </body>
 </html>
+
