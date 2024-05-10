@@ -38,4 +38,4 @@ class Input_form(MethodView):
         df_html = df.iloc[:, 1:].to_html(index=False)
         print(df)
 
-        return render_template('data.html', table=df_html, title= curr.currencies[currency])
+        return render_template('data.html', table=df_html, title=curr.currencies[currency])
