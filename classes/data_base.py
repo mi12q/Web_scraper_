@@ -8,14 +8,29 @@ import mpld3
 
 class DataBase:
     def __init__(self, start_date):
+        """
+        :param data: - таблица содержащая страны и валюты, для которых рассчитывается относительное изменение валютного курса
+        :param parameters: - таблица параметров на дату start_date
+        :param start_date: - дата относительно которой рассчитывается относительное изменение валютного курса
+        """
         self.data = None
         self.start_date = start_date
         self.parameters = None
 
     def get_parameters(self):
+        """
+
+        :return: - возвращает поле parameters
+        """
         return self.parameters
 
     def set_parameters(self, currency_dict):
+        """
+        Связывается с базой данных, заполняет поле parameters.
+        Если таблица параметров пуста, заполняет базу данных данными с сайта.
+        :param currency_dict: - словарь включающий все валюты
+        :return:
+        """
         conn = sqlite3.connect('parameters.db')
         cursor = conn.cursor()
         cursor.execute(''' 
@@ -35,14 +50,27 @@ class DataBase:
             self.parameters = pd.read_sql_query("SELECT * FROM parameters", conn)
 
     def set_data(self, data):
+        """
+        Заполняет поле data.
+        :param data: - таблица содержащая страны и валюты, для которых рассчитывается относительное изменение валютного курса
+        """
         self.data = data
 
     def set_global_data(self):
+        """
+        Заполняет data, данными со сайта 'https://www.iban.ru/currency-codes'.
+        :param data: - таблица содержащая страны и валюты, для которых рассчитывается относительное изменение валютного курс
+        """
         scr = parser.Global_currencies()
         scr.parse_page()
         self.data = scr.get_data()
 
     def update_parameters(self, new_data):
+        """
+        Добавляет в таблицу новые параметры, изменяет записи, которые изменились.
+        :param new_data: - новые данные
+        :return:
+        """
         merged_data = pd.merge(new_data[['Валюта', 'Дата', 'Курс']], self.data[['Валюта', 'Страна']], on='Валюта',
                                how="inner").iloc[:, [3, 0, 1, 2]]
         merged_data['Дата'] = pd.to_datetime(merged_data['Дата'], format='%d.%m.%Y').dt.strftime('%Y-%m-%d')
@@ -74,6 +102,11 @@ class DataBase:
         conn.close()
 
     def create_parameters_db(self, currency_dict):
+        """
+        Создает таблицу параметров, содержащую все валюты.
+        :param currency_dict: - словарь включающий все валюты
+        :return:
+        """
         end_date = (datetime.strptime(self.start_date, '%Y-%m-%d') + timedelta(days=365)).strftime('%Y-%m-%d')
         scr = parser.Webscraper()
         data_frames = [scr.parse_page(currency, self.start_date, end_date, curr.currencies) for currency in
@@ -84,6 +117,12 @@ class DataBase:
             self.update_parameters(all_data)
 
     def update_relative_currency_info(self, new_data):
+        """
+        Вычисляется относительное изменение курса для предстоящих данных.
+        Добавляет новые данные в таблицу изменения относительного курса валют, изменяет записи, которые изменились.
+        :param new_data: - новые данные
+        :return:
+        """
         merged_data = pd.merge(
             new_data[['Валюта', 'Дата', 'Курс']],
             self.parameters[['Валюта', 'Страна', 'Курс']].rename(columns={'Курс': 'Курс_на_дату'}),
@@ -127,6 +166,14 @@ class DataBase:
         conn.close()
 
     def create_relative_change_db(self, currency_dict, start_date, end_date):
+        """
+        Создает таблицу относительного изменения курса валют, для данных за выбранный диапазон между start_date и end_date,
+        для всех валют.
+        :param currency_dict:
+        :param start_date:
+        :param end_date:
+        :return:
+        """
         scr = parser.Webscraper()
         data_frames = [scr.parse_page(currency, start_date, end_date, curr.currencies) for currency in
                        currency_dict]
@@ -136,6 +183,14 @@ class DataBase:
             self.update_relative_currency_info(all_data)
 
     def plot_data(self, country_list, start_date, end_date):
+        """
+        Создает график относительного изменения курса валют для выбранных стран,
+        за выбранный диапазон между start_date и end_date.
+        :param country_list: - список стран
+        :param start_date: - начальная дата
+        :param end_date: - конечная дата
+        :return:
+        """
         plt.switch_backend('agg')
         conn = sqlite3.connect('currency_relative_change_by_country.db')
         country_placeholders = ','.join(['?'] * len(country_list))
@@ -181,6 +236,11 @@ class DataBase:
         return mpld3_html
 
     def get_currency_by_country(self, country_list):
+        """
+        Находит валюту соответствующей страны.
+        :param country_list: - список стран
+        :return:
+        """
         conn = sqlite3.connect('parameters.db')
         country_placeholders = ','.join(['?'] * len(country_list))
         query = f"""
@@ -193,6 +253,13 @@ class DataBase:
         return df
 
     def scrape_and_update(self, currency, start_date, end_date):
+        """
+        Считает данные с сайта, за выбранный диапазон и валюту,добавляет их в базу данных.
+        :param currency: - валюта
+        :param start_date: - начальная дата
+        :param end_date: - конечная дата
+        :return:
+        """
         scr = parser.Webscraper()
         scr.parse_page(currency, start_date, end_date, curr.currencies)
         data = scr.get_data()
