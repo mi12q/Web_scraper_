@@ -7,18 +7,39 @@ import sqlite3
 class Webscraper:
 
     def __init__(self):
+        """
+        :param url: - шаблон ссылки
+        :param data: - данные полученные со страницы
+        :param updated_url: - ссылка на сайт, с выбранной валютой и диапазоном дат
+        """
         self.url = 'https://www.finmarket.ru/currency/rates/?id=10148&pv=1&cur={}&bd={}&bm={}&by={}&ed={}&em={}&ey={' \
                    '}&x=48&y=13#archive'
         self.data = None
         self.updated_url = None
 
     def get_data(self):
+        """
+
+        :return: - возвращает поле data
+        """
         return self.data
 
     def get_url(self):
+        """
+
+        :return: - возвращает поле updated_url
+        """
         return self.updated_url
 
     def parse_page(self, currency, start_date, end_date, currencies):
+        """
+        Считывает курсы валют за выбранный диапазон со страницы.
+        :param currency: - валюта
+        :param start_date: - начальная дата
+        :param end_date: - конечная дата
+        :param currencies: - словарь всех валют
+        :return: - возрашает поле data
+        """
         dt1 = start_date.split('-')
         dt2 = end_date.split('-')
         self.updated_url = self.url.format(currency, dt1[2], dt1[1], dt1[0], dt2[2], dt2[1], dt2[0])
@@ -33,6 +54,10 @@ class Webscraper:
         return self.data
 
     def update_data_base(self):
+        """
+        Обновляет базу данных новыми данными.
+        :return:
+        """
         conn = sqlite3.connect('ЦБ_currency_data.db')
         cursor = conn.cursor()
         df = self.data.copy()
@@ -66,13 +91,25 @@ class Webscraper:
 
 class Global_currencies:
     def __init__(self):
+        """
+        :param url: - ссылка на страницу
+        :param data: - данные полученные со страницы
+        """
         self.url = 'https://www.iban.ru/currency-codes'
         self.data = None
 
     def get_data(self):
+        """
+
+        :return: - возвращает поле data
+        """
         return self.data
 
     def parse_page(self):
+        """
+        Считывает данные со страницы.
+        :return:
+        """
         page = requests.get(self.url)
         content = BeautifulSoup(page.content, "html.parser")
         table_of_values = content.find('table')
@@ -83,6 +120,10 @@ class Global_currencies:
         return self.data
 
     def update_data_base(self):
+        """
+        Обновляет базу данных новыми данными.
+        :return:
+        """
         conn = sqlite3.connect('global_currency_data.db')
         cursor = conn.cursor()
 
@@ -109,4 +150,3 @@ class Global_currencies:
         cursor.executemany(update_query, data_tuples)
         conn.commit()
         conn.close()
-

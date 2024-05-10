@@ -27,7 +27,7 @@ class DataBase:
     def set_parameters(self, currency_dict):
         """
         Связывается с базой данных, заполняет поле parameters.
-        Если таблица параметров пуста, заполняет базу данных данными с сайта.
+        Если таблица параметров пуста, заполняет базу данных данными со страницы.
         :param currency_dict: - словарь включающий все валюты
         :return:
         """
@@ -58,8 +58,8 @@ class DataBase:
 
     def set_global_data(self):
         """
-        Заполняет data, данными со сайта 'https://www.iban.ru/currency-codes'.
-        :param data: - таблица содержащая страны и валюты, для которых рассчитывается относительное изменение валютного курс
+        Заполняет data, данными со страницы 'https://www.iban.ru/currency-codes'.
+        :return:
         """
         scr = parser.Global_currencies()
         scr.parse_page()
@@ -254,7 +254,7 @@ class DataBase:
 
     def scrape_and_update(self, currency, start_date, end_date):
         """
-        Считает данные с сайта, за выбранный диапазон и валюту,добавляет их в базу данных.
+        Считает данные со страницы, за выбранный диапазон и валюту, добавляет их в базу данных.
         :param currency: - валюта
         :param start_date: - начальная дата
         :param end_date: - конечная дата
