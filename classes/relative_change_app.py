@@ -6,14 +6,16 @@ from concurrent.futures import ThreadPoolExecutor
 
 class Relative_change(MethodView):
 
-    def get(self):
+    @staticmethod
+    def get():
         """
 
         :return: - возвращает готовый шаблон веб-интерфейса к относительным изменениям курсов.
         """
         return render_template('website_countries.html')
 
-    def post(self):
+    @staticmethod
+    def post():
         """
         Получает выбранные пользователем станы,
         считываются данные со страницы для выбранных стран, строится график относительного изменения курсов валют.
@@ -35,8 +37,8 @@ class Relative_change(MethodView):
 
         currency_codes = (curr.reversed_dict[currency] for currency in currency_list['Валюта'])
         with ThreadPoolExecutor() as executor:
-            threads = list(executor.map(data_base_instance.scrape_and_update, currency_codes,
-                                        [start_date] * len(currency_list['Валюта']),
-                                        [end_date] * len(currency_list['Валюта'])))
+            executor.map(data_base_instance.scrape_and_update, currency_codes,
+                         [start_date] * len(currency_list['Валюта']),
+                         [end_date] * len(currency_list['Валюта']))
         graph = data_base_instance.plot_data(countries, start_date, end_date)
         return render_template('graph.html', graph_html=graph)

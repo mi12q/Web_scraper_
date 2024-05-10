@@ -7,15 +7,16 @@ import mpld3
 
 
 class DataBase:
-    def __init__(self, start_date):
+    def __init__(self, start_date, data=None, parameters=None):
         """
-        :param data: - таблица содержащая страны и валюты, для которых рассчитывается относительное изменение валютного курса
+        :param data: - таблица содержащая страны и валюты,
+        для которых рассчитывается относительное изменение валютного курса
         :param parameters: - таблица параметров на дату start_date
         :param start_date: - дата относительно которой рассчитывается относительное изменение валютного курса
         """
-        self.data = None
+        self.data = data
         self.start_date = start_date
-        self.parameters = None
+        self.parameters = parameters
 
     def get_parameters(self):
         """
@@ -52,7 +53,8 @@ class DataBase:
     def set_data(self, data):
         """
         Заполняет поле data.
-        :param data: - таблица содержащая страны и валюты, для которых рассчитывается относительное изменение валютного курса
+        :param data: - таблица содержащая страны и валюты,
+        для которых рассчитывается относительное изменение валютного курса
         """
         self.data = data
 
@@ -167,8 +169,8 @@ class DataBase:
 
     def create_relative_change_db(self, currency_dict, start_date, end_date):
         """
-        Создает таблицу относительного изменения курса валют, для данных за выбранный диапазон между start_date и end_date,
-        для всех валют.
+        Создает таблицу относительного изменения курса валют,
+        для данных за выбранный диапазон между start_date и end_date, для всех валют.
         :param currency_dict:
         :param start_date:
         :param end_date:
@@ -182,7 +184,8 @@ class DataBase:
         if not all_data.empty:
             self.update_relative_currency_info(all_data)
 
-    def plot_data(self, country_list, start_date, end_date):
+    @staticmethod
+    def plot_data(country_list, start_date, end_date):
         """
         Создает график относительного изменения курса валют для выбранных стран,
         за выбранный диапазон между start_date и end_date.
@@ -235,7 +238,8 @@ class DataBase:
         plt.close()
         return mpld3_html
 
-    def get_currency_by_country(self, country_list):
+    @staticmethod
+    def get_currency_by_country(country_list):
         """
         Находит валюту соответствующей страны.
         :param country_list: - список стран

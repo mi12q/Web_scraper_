@@ -6,16 +6,16 @@ import sqlite3
 
 class Webscraper:
 
-    def __init__(self):
+    def __init__(self, data=None, updated_url=None):
         """
-        :param url: - шаблон ссылки
+
         :param data: - данные полученные со страницы
         :param updated_url: - ссылка на сайт, с выбранной валютой и диапазоном дат
         """
         self.url = 'https://www.finmarket.ru/currency/rates/?id=10148&pv=1&cur={}&bd={}&bm={}&by={}&ed={}&em={}&ey={' \
                    '}&x=48&y=13#archive'
-        self.data = None
-        self.updated_url = None
+        self.data = data
+        self.updated_url = updated_url
 
     def get_data(self):
         """
@@ -90,13 +90,12 @@ class Webscraper:
 
 
 class Global_currencies:
-    def __init__(self):
+    def __init__(self, data=None):
         """
-        :param url: - ссылка на страницу
         :param data: - данные полученные со страницы
         """
         self.url = 'https://www.iban.ru/currency-codes'
-        self.data = None
+        self.data = data
 
     def get_data(self):
         """

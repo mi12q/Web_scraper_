@@ -5,14 +5,16 @@ from classes import parser_classes as classes, currencies as curr
 
 class Input_form(MethodView):
 
-    def get(self):
+    @staticmethod
+    def get():
         """
 
         :return: - возвращает готовый шаблон веб-интерфейса для считывания данных.
         """
         return render_template('website.html')
 
-    def post(self):
+    @staticmethod
+    def post():
         """
         Получает выбранную пользователем валюту и диапазон, считываются данные со страницы для выбранных параметров.
         :return: - возвращает шаблон страницы, содержащий таблицу полученных данных.
